@@ -207,9 +207,6 @@ export default function LandingPage() {
           <div className="text-white/20 text-xs text-center">
             Proyecto de Innovación · INACAP · 2026 · Prototipo de validación
           </div>
-          <div className="text-white/15 text-[11px]">
-            No representa servicios activos de INACAP
-          </div>
         </div>
       </footer>
     </div>
