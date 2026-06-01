@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { moderarTexto } from '../api'
 
 type FormState = {
   institucion: string
@@ -21,6 +22,7 @@ export default function FormInstituciones() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -29,11 +31,25 @@ export default function FormInstituciones() {
     setError('')
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!form.institucion || !form.cargo || !form.financiaria) {
       setError('Por favor completa los campos obligatorios.')
       return
+    }
+    const textoLibre = [form.institucion, form.cargo, form.comentario].filter(Boolean).join(' ')
+    setLoading(true)
+    try {
+      const { flagged } = await moderarTexto(textoLibre)
+      if (flagged) {
+        setError('El contenido ingresado contiene material inapropiado y no puede ser enviado.')
+        return
+      }
+    } catch {
+      setError('Error al verificar el contenido. Intenta nuevamente.')
+      return
+    } finally {
+      setLoading(false)
     }
     setSubmitted(true)
   }
@@ -170,9 +186,10 @@ export default function FormInstituciones() {
 
       <button
         type="submit"
-        className="w-full py-3 bg-inacap-dark text-white font-bold rounded-xl hover:bg-gray-800 active:scale-95 transition-all text-sm tracking-wide shadow-sm"
+        disabled={loading}
+        className="w-full py-3 bg-inacap-dark text-white font-bold rounded-xl hover:bg-gray-800 active:scale-95 transition-all text-sm tracking-wide shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        Enviar evaluación institucional →
+        {loading ? 'Verificando...' : 'Enviar evaluación institucional →'}
       </button>
     </form>
   )

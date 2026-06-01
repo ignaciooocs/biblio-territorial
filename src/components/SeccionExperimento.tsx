@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getRegistros, crearRegistro, incrementarVisitas, type CreateRegistroPayload } from '../api'
+import { getRegistros, crearRegistro, incrementarVisitas, moderarTexto, type CreateRegistroPayload } from '../api'
 
 const INSTITUCIONES = [
   'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central',
@@ -86,6 +86,7 @@ export default function SeccionExperimento() {
   const [showSugerencias, setShowSugerencias] = useState(false)
   const [enviado, setEnviado] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [moderando, setModerando] = useState(false)
   const instRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -126,12 +127,26 @@ export default function SeccionExperimento() {
     return e
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
+    }
+    const textoLibre = [nombre, barrio, motivo, telefono].filter(Boolean).join(' ')
+    setModerando(true)
+    try {
+      const { flagged } = await moderarTexto(textoLibre)
+      if (flagged) {
+        setErrors({ nombre: 'Tu registro contiene contenido inapropiado y no puede ser enviado.' })
+        return
+      }
+    } catch {
+      setErrors({ nombre: 'Error al verificar el contenido. Intenta nuevamente.' })
+      return
+    } finally {
+      setModerando(false)
     }
     const payload: CreateRegistroPayload = {
       nombre: nombre.trim(),
@@ -347,10 +362,10 @@ export default function SeccionExperimento() {
 
                   <button
                     type="submit"
-                    disabled={mutation.isPending}
+                    disabled={mutation.isPending || moderando}
                     className="w-full py-3.5 mt-1 bg-inacap-red text-white font-bold text-sm rounded-xl hover:bg-red-600 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(226,28,36,0.25)] tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {mutation.isPending ? 'Enviando...' : 'Registrar mi interés →'}
+                    {moderando ? 'Verificando...' : mutation.isPending ? 'Enviando...' : 'Registrar mi interés →'}
                   </button>
                 </form>
               </>

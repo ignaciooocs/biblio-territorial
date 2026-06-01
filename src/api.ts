@@ -35,3 +35,13 @@ export async function incrementarVisitas(): Promise<number> {
   const data = await res.json() as { count: number }
   return data.count
 }
+
+export async function moderarTexto(text: string): Promise<{ flagged: boolean }> {
+  const res = await fetch(`${API_URL}/moderation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  })
+  if (!res.ok) throw new Error('Error al verificar el contenido')
+  return res.json() as Promise<{ flagged: boolean }>
+}

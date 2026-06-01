@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { moderarTexto } from '../api'
 
 const SEDES = [
   'Santiago Centro', 'Las Condes', 'Maipú', 'La Florida',
@@ -52,6 +53,7 @@ export default function FormEstudiantes() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -62,11 +64,26 @@ export default function FormEstudiantes() {
     setError('')
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!form.sede || !form.usoSemanal || !form.trasladaria || !form.conectividad) {
       setError('Por favor completa todos los campos obligatorios.')
       return
+    }
+    if (form.nombre.trim()) {
+      setLoading(true)
+      try {
+        const { flagged } = await moderarTexto(form.nombre)
+        if (flagged) {
+          setError('Tu respuesta contiene contenido inapropiado y no puede ser enviada.')
+          return
+        }
+      } catch {
+        setError('Error al verificar el contenido. Intenta nuevamente.')
+        return
+      } finally {
+        setLoading(false)
+      }
     }
     setSubmitted(true)
   }
@@ -170,9 +187,10 @@ export default function FormEstudiantes() {
 
       <button
         type="submit"
-        className="w-full py-3 bg-inacap-red text-white font-bold rounded-xl hover:bg-red-700 active:scale-95 transition-all text-sm tracking-wide shadow-sm shadow-red-200"
+        disabled={loading}
+        className="w-full py-3 bg-inacap-red text-white font-bold rounded-xl hover:bg-red-700 active:scale-95 transition-all text-sm tracking-wide shadow-sm shadow-red-200 disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        Enviar respuesta →
+        {loading ? 'Verificando...' : 'Enviar respuesta →'}
       </button>
     </form>
   )
