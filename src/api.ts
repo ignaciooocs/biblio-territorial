@@ -25,6 +25,7 @@ export async function crearRegistro(data: CreateRegistroPayload): Promise<Regist
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
+  if (res.status === 409) throw new Error('DUPLICATE')
   if (!res.ok) throw new Error('Error al guardar el registro')
   return res.json() as Promise<RegistroAPI>
 }
@@ -66,6 +67,7 @@ export async function crearInstitucionResponse(data: CreateInstitucionPayload): 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
+  if (res.status === 409) throw new Error('DUPLICATE')
   if (!res.ok) throw new Error('Error al guardar la respuesta')
   return res.json() as Promise<InstitucionResponseAPI>
 }

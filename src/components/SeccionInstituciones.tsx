@@ -99,15 +99,24 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
         ['instituciones'],
         prev => [nueva, ...(prev ?? [])],
       )
+      localStorage.setItem('rbt_institucion_voted', '1')
+      setYaVoto(true)
       setEnviado(true)
       setForm(EMPTY)
       setErrors({})
+    },
+    onError: (err: Error) => {
+      if (err.message === 'DUPLICATE') {
+        localStorage.setItem('rbt_institucion_voted', '1')
+        setYaVoto(true)
+      }
     },
   })
 
   const [form, setForm]       = useState<FormState>(EMPTY)
   const [errors, setErrors]   = useState<Partial<Record<keyof FormState | 'general', string>>>({})
   const [enviado, setEnviado] = useState(false)
+  const [yaVoto, setYaVoto]   = useState(() => localStorage.getItem('rbt_institucion_voted') === '1')
   const [moderando, setModerando] = useState(false)
 
   const set = (field: keyof FormState) => (val: string) => {
@@ -226,7 +235,15 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
               <>
                 <h3 className="text-base font-bold text-white mb-6">Evaluación institucional</h3>
 
-                {mutation.isError && (
+                {yaVoto && (
+                  <div className="mb-5 px-4 py-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm flex items-start gap-2.5">
+                    <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Ya enviaste una evaluación desde este dispositivo. Solo se permite una respuesta por institución.</span>
+                  </div>
+                )}
+                {mutation.isError && (mutation.error as Error).message !== 'DUPLICATE' && (
                   <div className="mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
                     No se pudo enviar. Inténtalo de nuevo.
                   </div>
@@ -414,10 +431,10 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
                   <button
                     type="submit"
-                    disabled={mutation.isPending || moderando}
+                    disabled={mutation.isPending || moderando || yaVoto}
                     className="w-full py-3.5 mt-1 bg-inacap-red text-white font-bold text-sm rounded-xl hover:bg-red-600 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(226,28,36,0.25)] tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {moderando ? 'Verificando...' : mutation.isPending ? 'Enviando...' : 'Enviar evaluación institucional →'}
+                    {moderando ? 'Verificando...' : mutation.isPending ? 'Enviando...' : yaVoto ? 'Ya enviaste tu evaluación' : 'Enviar evaluación institucional →'}
                   </button>
                 </form>
               </>

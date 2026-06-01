@@ -64,8 +64,9 @@ export default function SeccionExperimento({ embedded = false }: { embedded?: bo
     mutationFn: crearRegistro,
     onSuccess: (nuevo) => {
       queryClient.setQueryData(['registros'], [nuevo, ...registros])
+      localStorage.setItem('rbt_estudiante_voted', '1')
+      setYaVoto(true)
       setEnviado(true)
-      setTimeout(() => setEnviado(false), 5000)
       setNombre('')
       setInstitucion('')
       setBarrio('')
@@ -73,6 +74,12 @@ export default function SeccionExperimento({ embedded = false }: { embedded?: bo
       setMotivo('')
       setTelefono('')
       setErrors({})
+    },
+    onError: (err: Error) => {
+      if (err.message === 'DUPLICATE') {
+        localStorage.setItem('rbt_estudiante_voted', '1')
+        setYaVoto(true)
+      }
     },
   })
 
@@ -85,6 +92,7 @@ export default function SeccionExperimento({ embedded = false }: { embedded?: bo
   const [sugerencias, setSugerencias] = useState<string[]>([])
   const [showSugerencias, setShowSugerencias] = useState(false)
   const [enviado, setEnviado] = useState(false)
+  const [yaVoto, setYaVoto] = useState(() => localStorage.getItem('rbt_estudiante_voted') === '1')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [moderando, setModerando] = useState(false)
   const instRef = useRef<HTMLDivElement>(null)
@@ -218,7 +226,15 @@ export default function SeccionExperimento({ embedded = false }: { embedded?: bo
               <>
                 <h3 className="text-base font-bold text-white mb-6">Registra tu interés</h3>
 
-                {mutation.isError && (
+                {yaVoto && (
+                  <div className="mb-5 px-4 py-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm flex items-start gap-2.5">
+                    <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Ya registraste tu respuesta desde este dispositivo. Solo se permite una participación por persona.</span>
+                  </div>
+                )}
+                {mutation.isError && (mutation.error as Error).message !== 'DUPLICATE' && (
                   <div className="mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
                     No se pudo enviar el registro. Inténtalo de nuevo.
                   </div>
@@ -364,10 +380,10 @@ export default function SeccionExperimento({ embedded = false }: { embedded?: bo
 
                   <button
                     type="submit"
-                    disabled={mutation.isPending || moderando}
+                    disabled={mutation.isPending || moderando || yaVoto}
                     className="w-full py-3.5 mt-1 bg-inacap-red text-white font-bold text-sm rounded-xl hover:bg-red-600 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(226,28,36,0.25)] tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {moderando ? 'Verificando...' : mutation.isPending ? 'Enviando...' : 'Registrar mi interés →'}
+                    {moderando ? 'Verificando...' : mutation.isPending ? 'Enviando...' : yaVoto ? 'Ya participaste' : 'Registrar mi interés →'}
                   </button>
                 </form>
               </>
