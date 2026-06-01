@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import StoryboardSlider from '../components/StoryboardSlider'
-import SeccionExperimento from '../components/SeccionExperimento'
+import SeccionFormularios from '../components/SeccionFormularios'
 // import FormEstudiantes from '../components/FormEstudiantes'
 // import FormInstituciones from '../components/FormInstituciones'
 
@@ -189,8 +189,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ──────────────── EXPERIMENTO ──────────────── */}
-      <SeccionExperimento />
+      {/* ──────────────── FORMULARIOS (tabs) ──────────────── */}
+      <SeccionFormularios />
 
       {/* ──────────────── FOOTER ──────────────── */}
       <footer className="border-t border-white/[0.05] py-12 px-6">

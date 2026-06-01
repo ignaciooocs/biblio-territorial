@@ -45,7 +45,7 @@ const intencionColor = (val: string) => {
   return 'bg-white/5 text-white/30 border-white/10'
 }
 
-export default function SeccionExperimento() {
+export default function SeccionExperimento({ embedded = false }: { embedded?: boolean }) {
   const queryClient = useQueryClient()
 
   const { data: registros = [], isLoading: loadingRegistros } = useQuery({
@@ -161,16 +161,18 @@ export default function SeccionExperimento() {
 
   const isLoading = loadingRegistros
   const estudiantesInscritos = registros.length
+  const exitosos = registros.filter(r => r.intencion === 'si' || r.intencion === 'talvez').length
   const tasaConversion = visitas > 0
     ? parseFloat(((estudiantesInscritos / visitas) * 100).toFixed(1))
     : 0
-  const objetivoCumplido = estudiantesInscritos >= 30 || tasaConversion >= 15
-  const progreso = Math.min((estudiantesInscritos / 30) * 100, 100)
+  const objetivoCumplido = exitosos >= 10
+  const progreso = Math.min((exitosos / 10) * 100, 100)
   const ultimos5 = registros.slice(0, 5)
 
+  const Outer = embedded ? 'div' : 'section'
   return (
-    <section id="experimento" className="py-16 md:py-24 lg:py-28 px-6 bg-black border-t border-white/[0.05]">
-      <div className="max-w-5xl mx-auto">
+    <Outer id={embedded ? undefined : 'experimento'} className={embedded ? '' : 'py-16 md:py-24 lg:py-28 px-6 bg-black border-t border-white/[0.05]'}>
+      <div className={embedded ? '' : 'max-w-5xl mx-auto'}>
 
         {/* ── Header ── */}
         <div className="mb-10 md:mb-16">
@@ -385,9 +387,9 @@ export default function SeccionExperimento() {
               </div>
               <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:gap-4">
                 <div className="text-2xl md:text-3xl font-black text-inacap-red leading-none">
-                  {isLoading ? '—' : estudiantesInscritos}
+                  {isLoading ? '—' : exitosos}
                 </div>
-                <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Estudiantes inscritos</div>
+                <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Respuestas positivas</div>
               </div>
               <div className={`rounded-xl border p-4 text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:gap-4 transition-colors ${objetivoCumplido ? 'border-green-500/25 bg-green-500/5' : 'border-white/[0.07] bg-white/[0.02]'}`}>
                 <div className={`text-2xl md:text-3xl font-black leading-none ${objetivoCumplido ? 'text-green-400' : 'text-yellow-400'}`}>
@@ -403,14 +405,14 @@ export default function SeccionExperimento() {
                 {objetivoCumplido ? '✓ Objetivo alcanzado' : '⏳ Objetivo en progreso'}
               </p>
               <p className="text-white/40 text-xs leading-relaxed mb-3">
-                Hipótesis validada si supera{' '}
-                <span className="text-white/70 font-semibold">30 inscritos</span> o una tasa de{' '}
-                <span className="text-white/70 font-semibold">15%</span> en el Gran Valparaíso.
+                Hipótesis validada si{' '}
+                <span className="text-white/70 font-semibold">10 o más estudiantes</span>{' '}
+                responden "Sí" o "Tal vez" usarían el microcentro.
               </p>
               <div className="space-y-1">
                 <div className="flex justify-between text-[10px] text-white/25">
-                  <span>Progreso hacia 30 inscritos</span>
-                  <span>{Math.min(estudiantesInscritos, 30)}/30</span>
+                  <span>Respuestas positivas</span>
+                  <span>{Math.min(exitosos, 10)}/10</span>
                 </div>
                 <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                   <div
@@ -469,6 +471,6 @@ export default function SeccionExperimento() {
 
         </div>
       </div>
-    </section>
+    </Outer>
   )
 }

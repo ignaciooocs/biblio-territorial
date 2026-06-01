@@ -36,6 +36,42 @@ export async function incrementarVisitas(): Promise<number> {
   return data.count
 }
 
+// ── Instituciones ──────────────────────────────────────────────────────────
+
+export interface InstitucionResponseAPI {
+  _id: string
+  nombreInstitucion: string
+  tipoInstitucion: string
+  representante: string
+  cargo: string
+  email: string
+  financiaria: string
+  cupos: string
+  plazo: string
+  condiciones: string
+  createdAt: string
+}
+
+export type CreateInstitucionPayload = Omit<InstitucionResponseAPI, '_id' | 'createdAt'>
+
+export async function getInstitucionesResponses(): Promise<InstitucionResponseAPI[]> {
+  const res = await fetch(`${API_URL}/instituciones`)
+  if (!res.ok) throw new Error('Error al cargar respuestas')
+  return res.json() as Promise<InstitucionResponseAPI[]>
+}
+
+export async function crearInstitucionResponse(data: CreateInstitucionPayload): Promise<InstitucionResponseAPI> {
+  const res = await fetch(`${API_URL}/instituciones`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error('Error al guardar la respuesta')
+  return res.json() as Promise<InstitucionResponseAPI>
+}
+
+// ── Moderación ─────────────────────────────────────────────────────────────
+
 export async function moderarTexto(text: string): Promise<{ flagged: boolean }> {
   const res = await fetch(`${API_URL}/moderation`, {
     method: 'POST',
