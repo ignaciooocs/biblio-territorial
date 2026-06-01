@@ -44,26 +44,26 @@ export default function SeccionFormularios() {
   const current = TABS.find(t => t.id === active)!
 
   return (
-    <section id="formularios" className="py-16 md:py-24 lg:py-28 px-6 bg-black border-t border-white/[0.05]">
+    <section id="formularios" className="py-16 md:py-24 lg:py-28 px-6 bg-background border-t border-foreground/[0.05]">
       <div className="max-w-5xl mx-auto">
 
         {/* ── Encabezado de sección ── */}
         <div className="mb-8 md:mb-12">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30 mb-3">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground/30 mb-3">
             Test Cards · Validación de hipótesis
           </p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground leading-tight tracking-tight">
               Participa en la validación
             </h2>
-            <p className="text-white/30 text-sm max-w-xs leading-relaxed sm:text-right">
+            <p className="text-foreground/30 text-sm max-w-xs leading-relaxed sm:text-right">
               Dos formularios, dos hipótesis. Selecciona según tu perfil.
             </p>
           </div>
         </div>
 
         {/* ── Tab navigation ── */}
-        <div className="flex gap-3 mb-10 md:mb-14 p-1.5 bg-white/[0.02] rounded-2xl border border-white/[0.06]">
+        <div className="flex gap-3 mb-10 md:mb-14 p-1.5 bg-foreground/[0.02] rounded-2xl border border-foreground/[0.06]">
           {TABS.map(tab => (
             <button
               key={tab.id}
@@ -71,7 +71,7 @@ export default function SeccionFormularios() {
               className={`flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 px-4 py-4 rounded-xl border font-medium text-sm transition-all cursor-pointer ${
                 active === tab.id
                   ? tab.activeClass
-                  : 'border-transparent text-white/30 hover:text-white/60 hover:bg-white/[0.03]'
+                  : 'border-transparent text-foreground/30 hover:text-foreground/60 hover:bg-foreground/[0.03]'
               }`}
             >
               {/* Icono + label */}
@@ -80,16 +80,16 @@ export default function SeccionFormularios() {
                 <span className="font-bold tracking-wide">{tab.label}</span>
               </div>
 
-              {/* Badge + descripción (solo visible en desktop o tab activo) */}
+              {/* Badge */}
               <div className="flex items-center gap-2 sm:ml-auto">
                 <span className={`hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                  active === tab.id ? tab.badgeClass : 'bg-white/[0.03] text-white/20 border-white/[0.08]'
+                  active === tab.id ? tab.badgeClass : 'bg-foreground/[0.03] text-foreground/20 border-foreground/[0.08]'
                 }`}>
                   {tab.badge}
                 </span>
               </div>
 
-              {/* Descripción corta debajo (solo tab activo en mobile) */}
+              {/* Descripción corta (solo tab activo en mobile) */}
               {active === tab.id && (
                 <p className="sm:hidden text-[11px] opacity-70 leading-snug mt-0.5">{tab.desc}</p>
               )}
@@ -100,14 +100,14 @@ export default function SeccionFormularios() {
         {/* ── Indicador de tab activo ── */}
         <div className={`flex items-center gap-2.5 mb-8 pb-6 border-b ${current.borderClass}`}>
           <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${current.dotClass}`} />
-          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/30">
+          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/30">
             {current.badge}
           </span>
-          <span className="text-white/15 text-[11px]">·</span>
-          <span className="text-white/30 text-[11px]">{current.desc}</span>
+          <span className="text-foreground/15 text-[11px]">·</span>
+          <span className="text-foreground/30 text-[11px]">{current.desc}</span>
         </div>
 
-        {/* ── Contenido de tabs (ambos montados, solo uno visible) ── */}
+        {/* ── Contenido de tabs ── */}
         <div className={active === 'estudiantes' ? 'block' : 'hidden'}>
           <SeccionExperimento embedded />
         </div>

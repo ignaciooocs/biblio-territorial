@@ -1,9 +1,29 @@
 @import "tailwindcss";
 
+:root {
+  --theme-bg: #ffffff;
+  --theme-fg: #0f172a;
+  --theme-card: #f1f5f9;
+  --grid-color: rgba(0, 0, 0, 0.4);
+}
+
+.dark {
+  --theme-bg: #000000;
+  --theme-fg: #ffffff;
+  --theme-card: #0d1117;
+  --grid-color: rgba(255, 255, 255, 0.5);
+}
+
 @theme {
   --color-inacap-red: #E21C24;
   --color-inacap-dark: #1A1A1A;
   --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--theme-bg);
+  --color-foreground: var(--theme-fg);
+  --color-surface-card: var(--theme-card);
 }
 
 *, *::before, *::after {

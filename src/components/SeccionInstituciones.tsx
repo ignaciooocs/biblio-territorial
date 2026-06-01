@@ -23,7 +23,7 @@ const FINANCIAMIENTO = [
   { value: 'si_inmediato',   label: 'Sí, podemos comprometernos ahora',      color: 'border-green-500/30 bg-green-500/5 text-green-400' },
   { value: 'si_presupuesto', label: 'Sí, con aprobación presupuestaria',      color: 'border-yellow-500/30 bg-yellow-500/5 text-yellow-400' },
   { value: 'talvez',         label: 'Tal vez, necesitamos más información',   color: 'border-blue-500/30 bg-blue-500/5 text-blue-400' },
-  { value: 'no',             label: 'No, sin presupuesto disponible',         color: 'border-white/10 bg-white/[0.02] text-white/40' },
+  { value: 'no',             label: 'No, sin presupuesto disponible',         color: 'border-foreground/10 bg-foreground/[0.02] text-foreground/40' },
 ]
 
 const CUPOS_OPTIONS = [
@@ -46,7 +46,7 @@ function financiamientoColor(val: string) {
   if (val === 'si_inmediato')   return 'bg-green-500/10 text-green-400 border-green-500/20'
   if (val === 'si_presupuesto') return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
   if (val === 'talvez')         return 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-  return 'bg-white/5 text-white/30 border-white/10'
+  return 'bg-foreground/5 text-foreground/30 border-foreground/10'
 }
 
 function financiamientoLabel(val: string) {
@@ -183,11 +183,11 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
   const ultimas      = respuestas.slice(0, 4)
 
   // ── Input base class ──
-  const inputCls = 'w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all'
+  const inputCls = 'w-full bg-foreground/[0.04] border border-foreground/[0.08] rounded-xl px-4 py-3 text-foreground text-sm placeholder:text-foreground/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all'
 
   const Outer = embedded ? 'div' : 'section'
   return (
-    <Outer id={embedded ? undefined : 'instituciones'} className={embedded ? '' : 'py-16 md:py-24 lg:py-28 px-6 bg-black border-t border-white/[0.05]'}>
+    <Outer id={embedded ? undefined : 'instituciones'} className={embedded ? '' : 'py-16 md:py-24 lg:py-28 px-6 bg-background border-t border-foreground/[0.05]'}>
       <div className={embedded ? '' : 'max-w-5xl mx-auto'}>
 
         {/* ── Header ── */}
@@ -196,11 +196,11 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
             Modelo B2B · Validación Institucional
           </p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight max-w-xl">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight max-w-xl">
               ¿Tu institución financiaría Cupos de Retención?
             </h2>
-            <p className="text-white/35 text-sm md:text-[15px] max-w-sm leading-relaxed md:text-right">
-              <span className="text-white/60 font-semibold">$50.000/mes por alumno.</span>
+            <p className="text-foreground/35 text-sm md:text-[15px] max-w-sm leading-relaxed md:text-right">
+              <span className="text-foreground/60 font-semibold">$50.000/mes por alumno.</span>
               {' '}La institución garantiza acceso al microcentro para sus estudiantes sin costo adicional para ellos.
             </p>
           </div>
@@ -209,7 +209,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10">
 
           {/* ── FORMULARIO (3/5) ── */}
-          <div className="lg:col-span-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 md:p-8">
+          <div className="lg:col-span-3 rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 md:p-8">
 
             {enviado ? (
               <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
@@ -219,8 +219,8 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                   </svg>
                 </div>
                 <div>
-                  <p className="text-white font-bold text-lg mb-1">¡Gracias por su evaluación!</p>
-                  <p className="text-white/40 text-sm max-w-xs mx-auto leading-relaxed">
+                  <p className="text-foreground font-bold text-lg mb-1">¡Gracias por su evaluación!</p>
+                  <p className="text-foreground/40 text-sm max-w-xs mx-auto leading-relaxed">
                     Su respuesta contribuye a validar la viabilidad institucional de la Red Biblio-Territorial.
                   </p>
                 </div>
@@ -233,7 +233,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
               </div>
             ) : (
               <>
-                <h3 className="text-base font-bold text-white mb-6">Evaluación institucional</h3>
+                <h3 className="text-base font-bold text-foreground mb-6">Evaluación institucional</h3>
 
                 {yaVoto && (
                   <div className="mb-5 px-4 py-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm flex items-start gap-2.5">
@@ -258,7 +258,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
                   {/* Nombre institución */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                       Nombre de la institución <span className="text-inacap-red">*</span>
                     </label>
                     <input
@@ -273,7 +273,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
                   {/* Tipo institución */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                       Tipo de institución <span className="text-inacap-red">*</span>
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -285,7 +285,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                           className={`px-3 py-2.5 rounded-xl border text-xs font-medium transition-all text-center cursor-pointer ${
                             form.tipoInstitucion === t.value
                               ? 'border-inacap-red/60 bg-inacap-red/10 text-inacap-red'
-                              : 'border-white/[0.08] text-white/40 hover:border-white/20 hover:text-white/70'
+                              : 'border-foreground/[0.08] text-foreground/40 hover:border-foreground/20 hover:text-foreground/70'
                           }`}
                         >
                           {t.label}
@@ -298,7 +298,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                   {/* Representante + Cargo */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                      <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                         Nombre del representante <span className="text-inacap-red">*</span>
                       </label>
                       <input
@@ -311,7 +311,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                       {errors.representante && <p className="text-red-400 text-[11px] mt-1.5">{errors.representante}</p>}
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                      <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                         Cargo <span className="text-inacap-red">*</span>
                       </label>
                       <input
@@ -327,8 +327,8 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
                   {/* Email (opcional) */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
-                      Email de contacto <span className="text-white/20 font-normal normal-case tracking-normal">(opcional)</span>
+                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
+                      Email de contacto <span className="text-foreground/20 font-normal normal-case tracking-normal">(opcional)</span>
                     </label>
                     <input
                       type="email"
@@ -338,12 +338,12 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                       className={inputCls}
                     />
                     {errors.email && <p className="text-red-400 text-[11px] mt-1.5">{errors.email}</p>}
-                    <p className="text-white/20 text-[10px] mt-1.5">Solo para enviarle el informe de validación final.</p>
+                    <p className="text-foreground/20 text-[10px] mt-1.5">Solo para enviarle el informe de validación final.</p>
                   </div>
 
                   {/* Financiamiento */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                       ¿Financiaría cupos de retención a $50.000/mes por alumno? <span className="text-inacap-red">*</span>
                     </label>
                     <div className="space-y-2">
@@ -353,7 +353,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                           type="button"
                           onClick={() => set('financiaria')(f.value)}
                           className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
-                            form.financiaria === f.value ? f.color : 'border-white/[0.08] text-white/40 hover:border-white/15 hover:text-white/60'
+                            form.financiaria === f.value ? f.color : 'border-foreground/[0.08] text-foreground/40 hover:border-foreground/15 hover:text-foreground/60'
                           }`}
                         >
                           {f.label}
@@ -368,7 +368,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                     <>
                       {/* Cupos */}
                       <div>
-                        <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                        <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                           ¿Cuántos cupos financiaría?
                         </label>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -380,11 +380,11 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                               className={`px-3 py-3 rounded-xl border text-center transition-all cursor-pointer ${
                                 form.cupos === c.value
                                   ? 'border-inacap-red/60 bg-inacap-red/10'
-                                  : 'border-white/[0.08] hover:border-white/20'
+                                  : 'border-foreground/[0.08] hover:border-foreground/20'
                               }`}
                             >
-                              <div className={`text-sm font-bold ${form.cupos === c.value ? 'text-inacap-red' : 'text-white/60'}`}>{c.label}</div>
-                              <div className="text-[10px] text-white/25 mt-0.5">{c.sub}</div>
+                              <div className={`text-sm font-bold ${form.cupos === c.value ? 'text-inacap-red' : 'text-foreground/60'}`}>{c.label}</div>
+                              <div className="text-[10px] text-foreground/25 mt-0.5">{c.sub}</div>
                             </button>
                           ))}
                         </div>
@@ -392,7 +392,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
                       {/* Plazo */}
                       <div>
-                        <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                        <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                           ¿En qué plazo podría comprometerse?
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -404,7 +404,7 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                               className={`px-3 py-2.5 rounded-xl border text-xs font-medium transition-all cursor-pointer text-center ${
                                 form.plazo === p.value
                                   ? 'border-inacap-red/60 bg-inacap-red/10 text-inacap-red'
-                                  : 'border-white/[0.08] text-white/40 hover:border-white/20 hover:text-white/60'
+                                  : 'border-foreground/[0.08] text-foreground/40 hover:border-foreground/20 hover:text-foreground/60'
                               }`}
                             >
                               {p.label}
@@ -415,9 +415,9 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
                     </>
                   )}
 
-                  {/* Condiciones / comentarios */}
+                  {/* Condiciones */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-white/40 mb-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-[0.15em] text-foreground/40 mb-2">
                       ¿Qué información o condiciones necesita para decidir?
                     </label>
                     <textarea
@@ -446,23 +446,23 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
 
             {/* KPIs */}
             <div className="grid grid-cols-3 lg:grid-cols-1 gap-3">
-              <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4">
+              <div className="rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4">
                 <div className="text-2xl md:text-3xl font-black text-inacap-red leading-none">
                   {isLoading ? '—' : total}
                 </div>
-                <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Instituciones evaluaron</div>
+                <div className="text-[10px] text-foreground/35 font-medium mt-1 lg:mt-0 leading-tight">Instituciones evaluaron</div>
               </div>
-              <div className={`rounded-xl border p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4 transition-colors ${pctSi >= 50 ? 'border-green-500/25 bg-green-500/5' : 'border-white/[0.07] bg-white/[0.02]'}`}>
+              <div className={`rounded-xl border p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4 transition-colors ${pctSi >= 50 ? 'border-green-500/25 bg-green-500/5' : 'border-foreground/[0.07] bg-foreground/[0.02]'}`}>
                 <div className={`text-2xl md:text-3xl font-black leading-none ${pctSi >= 50 ? 'text-green-400' : 'text-yellow-400'}`}>
                   {isLoading ? '—' : `${pctSi}%`}
                 </div>
-                <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Dispuestas a financiar</div>
+                <div className="text-[10px] text-foreground/35 font-medium mt-1 lg:mt-0 leading-tight">Dispuestas a financiar</div>
               </div>
-              <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4">
-                <div className="text-2xl md:text-3xl font-black text-white leading-none">
+              <div className="rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] p-4 flex flex-col lg:flex-row lg:items-center lg:gap-4">
+                <div className="text-2xl md:text-3xl font-black text-foreground leading-none">
                   {isLoading ? '—' : cuposTotal}
                 </div>
-                <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Cupos estimados</div>
+                <div className="text-[10px] text-foreground/35 font-medium mt-1 lg:mt-0 leading-tight">Cupos estimados</div>
               </div>
             </div>
 
@@ -471,17 +471,17 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
               <p className={`text-[11px] font-bold uppercase tracking-[0.12em] mb-1.5 ${comprometidas >= 5 ? 'text-green-400' : 'text-yellow-400'}`}>
                 {comprometidas >= 5 ? '✓ Hipótesis validada' : '⏳ En validación'}
               </p>
-              <p className="text-white/40 text-xs leading-relaxed mb-3">
+              <p className="text-foreground/40 text-xs leading-relaxed mb-3">
                 Hipótesis B2B validada si{' '}
-                <span className="text-white/70 font-semibold">5 o más instituciones</span>{' '}
+                <span className="text-foreground/70 font-semibold">5 o más instituciones</span>{' '}
                 se comprometen a financiar cupos.
               </p>
               <div className="space-y-1">
-                <div className="flex justify-between text-[10px] text-white/25">
+                <div className="flex justify-between text-[10px] text-foreground/25">
                   <span>Comprometidas</span>
                   <span>{comprometidas}/5</span>
                 </div>
-                <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-foreground/[0.06] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${comprometidas >= 5 ? 'bg-green-500' : 'bg-inacap-red'}`}
                     style={{ width: `${Math.min((comprometidas / 5) * 100, 100)}%` }}
@@ -491,35 +491,35 @@ export default function SeccionInstituciones({ embedded = false }: { embedded?: 
             </div>
 
             {/* Últimas respuestas */}
-            <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-5 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4">
+            <div className="rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] p-5 flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-foreground/25 mb-4">
                 Últimas evaluaciones
               </p>
               {isLoading ? (
                 <div className="space-y-3.5">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="pb-3.5 border-b border-white/[0.05] last:border-0 animate-pulse">
-                      <div className="h-3 bg-white/[0.06] rounded w-3/4 mb-2" />
-                      <div className="h-2.5 bg-white/[0.04] rounded w-1/2" />
+                    <div key={i} className="pb-3.5 border-b border-foreground/[0.05] last:border-0 animate-pulse">
+                      <div className="h-3 bg-foreground/[0.06] rounded w-3/4 mb-2" />
+                      <div className="h-2.5 bg-foreground/[0.04] rounded w-1/2" />
                     </div>
                   ))}
                 </div>
               ) : ultimas.length === 0 ? (
-                <p className="text-white/20 text-xs">Aún no hay evaluaciones. ¡Sé el primero!</p>
+                <p className="text-foreground/20 text-xs">Aún no hay evaluaciones. ¡Sé el primero!</p>
               ) : (
                 <ul className="space-y-3.5">
                   {ultimas.map((r, i) => (
-                    <li key={r._id ?? i} className="pb-3.5 border-b border-white/[0.05] last:border-0 last:pb-0">
+                    <li key={r._id ?? i} className="pb-3.5 border-b border-foreground/[0.05] last:border-0 last:pb-0">
                       <div className="flex items-start justify-between gap-2 mb-1">
-                        <span className="text-white/80 text-sm font-semibold leading-tight truncate">{r.nombreInstitucion}</span>
+                        <span className="text-foreground/80 text-sm font-semibold leading-tight truncate">{r.nombreInstitucion}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${financiamientoColor(r.financiaria)}`}>
                           {financiamientoLabel(r.financiaria)}
                         </span>
                       </div>
-                      <p className="text-white/35 text-[11px] mb-0.5">{tipoLabel(r.tipoInstitucion)}</p>
-                      <p className="text-white/25 text-[11px]">{r.representante} · {r.cargo}</p>
+                      <p className="text-foreground/35 text-[11px] mb-0.5">{tipoLabel(r.tipoInstitucion)}</p>
+                      <p className="text-foreground/25 text-[11px]">{r.representante} · {r.cargo}</p>
                       {r.cupos && (
-                        <p className="text-white/20 text-[10px] mt-0.5">
+                        <p className="text-foreground/20 text-[10px] mt-0.5">
                           {CUPOS_OPTIONS.find(c => c.value === r.cupos)?.label} cupos
                         </p>
                       )}

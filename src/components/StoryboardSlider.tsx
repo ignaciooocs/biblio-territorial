@@ -92,18 +92,18 @@ export default function StoryboardSlider() {
     <div className="w-full max-w-3xl mx-auto select-none">
 
       {/* ── Card ── */}
-      <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/8 bg-[#0d1117]">
+      <div className="rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-foreground/[0.08] bg-surface-card">
 
-        {/* Imagen: 4:3 en móvil → 16:9 desde sm para no aplastar el cómic */}
-        <div className="relative w-full aspect-[4/3] sm:aspect-video overflow-hidden bg-black">
+        {/* Imagen */}
+        <div className="relative w-full aspect-[4/3] sm:aspect-video overflow-hidden bg-background">
           <img
             key={scene.image}
             src={scene.image}
             alt={scene.title}
             className="w-full h-full object-cover object-top"
           />
-          {/* Fade inferior hacia el panel de contenido */}
-          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#0d1117] to-transparent" />
+          {/* Fade inferior */}
+          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-surface-card to-transparent" />
 
           {/* Tag badge */}
           <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
@@ -123,19 +123,19 @@ export default function StoryboardSlider() {
         {/* Contenido textual */}
         <div className="px-4 pt-3 pb-4 sm:px-6 sm:pt-3 sm:pb-6 md:px-10 md:pb-8">
 
-          <h3 className="text-base sm:text-xl md:text-2xl font-black text-white leading-tight mb-2 md:mb-3">
+          <h3 className="text-base sm:text-xl md:text-2xl font-black text-foreground leading-tight mb-2 md:mb-3">
             {scene.title}
           </h3>
 
-          <p className="text-slate-400 text-[13px] sm:text-sm md:text-[15px] leading-relaxed mb-4 md:mb-6">
+          <p className="text-foreground/60 text-[13px] sm:text-sm md:text-[15px] leading-relaxed mb-4 md:mb-6">
             {scene.description}
           </p>
 
-          {/* Stats: 3 columnas en todos los tamaños, con tamaños escalonados */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 pt-3 md:pt-5 border-t border-white/[0.08]">
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 pt-3 md:pt-5 border-t border-foreground/[0.08]">
             {scene.stats.map(({ label, value }) => (
               <div key={label}>
-                <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-500 mb-0.5 sm:mb-1 truncate">
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-foreground/40 mb-0.5 sm:mb-1 truncate">
                   {label}
                 </p>
                 <p className="text-[11px] sm:text-xs md:text-sm font-bold leading-tight" style={{ color: scene.accent }}>
@@ -147,10 +147,7 @@ export default function StoryboardSlider() {
         </div>
       </div>
 
-      {/* ── Controles ──
-          Móvil (<sm): botones arriba a ancho completo, dots centrados abajo.
-          sm+: fila única con prev | dots | next.
-      ── */}
+      {/* ── Controles ── */}
       <div className="mt-4">
 
         {/* Layout móvil */}
@@ -159,22 +156,22 @@ export default function StoryboardSlider() {
             <button
               onClick={prev}
               disabled={current === 0}
-              className="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all bg-white/[0.06] border border-white/[0.08] text-white/70 hover:bg-white/10 disabled:opacity-25 disabled:cursor-not-allowed"
+              className="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all bg-foreground/[0.06] border border-foreground/[0.08] text-foreground/70 hover:bg-foreground/10 disabled:opacity-25 disabled:cursor-not-allowed"
             >
               ← Anterior
             </button>
-            <span className="text-white/30 text-xs font-mono tabular-nums px-2">
+            <span className="text-foreground/30 text-xs font-mono tabular-nums px-2">
               {current + 1}/{scenes.length}
             </span>
             <button
               onClick={next}
               disabled={current === scenes.length - 1}
-              className="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all bg-white/[0.06] border border-white/[0.08] text-white/70 hover:bg-white/10 disabled:opacity-25 disabled:cursor-not-allowed"
+              className="flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all bg-foreground/[0.06] border border-foreground/[0.08] text-foreground/70 hover:bg-foreground/10 disabled:opacity-25 disabled:cursor-not-allowed"
             >
               Siguiente →
             </button>
           </div>
-          {/* Dots centrados */}
+          {/* Dots */}
           <div className="flex items-center justify-center gap-2">
             {scenes.map((_, i) => (
               <button
@@ -185,7 +182,7 @@ export default function StoryboardSlider() {
                 style={{
                   width: i === current ? 24 : 6,
                   height: 6,
-                  backgroundColor: i === current ? scene.accent : '#374151',
+                  backgroundColor: i === current ? scene.accent : 'rgba(100,116,139,0.5)',
                 }}
               />
             ))}
@@ -197,7 +194,7 @@ export default function StoryboardSlider() {
           <button
             onClick={prev}
             disabled={current === 0}
-            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-white/[0.06] border border-white/[0.08] text-white/70 hover:bg-white/10 disabled:opacity-25 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-foreground/[0.06] border border-foreground/[0.08] text-foreground/70 hover:bg-foreground/10 disabled:opacity-25 disabled:cursor-not-allowed"
           >
             ← Anterior
           </button>
@@ -212,7 +209,7 @@ export default function StoryboardSlider() {
                 style={{
                   width: i === current ? 28 : 8,
                   height: 8,
-                  backgroundColor: i === current ? scene.accent : '#374151',
+                  backgroundColor: i === current ? scene.accent : 'rgba(100,116,139,0.5)',
                 }}
               />
             ))}
@@ -221,7 +218,7 @@ export default function StoryboardSlider() {
           <button
             onClick={next}
             disabled={current === scenes.length - 1}
-            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-white/[0.06] border border-white/[0.08] text-white/70 hover:bg-white/10 disabled:opacity-25 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all bg-foreground/[0.06] border border-foreground/[0.08] text-foreground/70 hover:bg-foreground/10 disabled:opacity-25 disabled:cursor-not-allowed"
           >
             Siguiente →
           </button>
