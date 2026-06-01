@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getRegistros, crearRegistro, incrementarVisitas, type CreateRegistroPayload } from '../api'
 
 const INSTITUCIONES = [
   'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central',
@@ -15,57 +17,11 @@ const INSTITUCIONES = [
   'Otra institución de la región',
 ]
 
-
 const INTENCIONES = [
   { value: 'si', label: 'Sí, asistiría totalmente al microcentro de mi barrio' },
   { value: 'talvez', label: 'Tal vez, dependiendo del horario' },
   { value: 'no', label: 'No, prefiero estudiar en casa' },
 ]
-
-interface Registro {
-  nombre: string
-  institucion: string
-  barrio: string
-  intencion: string
-  motivo: string
-  telefono: string
-  timestamp: number
-}
-
-const REGISTROS_SIMULADOS: Registro[] = [
-  { nombre: 'Valentina M.', institucion: 'Universidad de Valparaíso (UV) - Sede Reñaca', barrio: 'Reñaca', intencion: 'si', motivo: 'En mi casa la señal de internet se cae siempre que llueve.', telefono: '', timestamp: 1748000000000 },
-  { nombre: 'Sebastián R.', institucion: 'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central', barrio: 'Cerro Alegre', intencion: 'si', motivo: 'Ideal para estudiar después de bajar del plan en micro.', telefono: '', timestamp: 1747950000000 },
-  { nombre: 'Isidora P.', institucion: 'Universidad Técnica Federico Santa María (UTFSM) - Casa Central Valparaíso', barrio: 'Cerro Barón', intencion: 'si', motivo: 'En los cerros la señal de internet se cae siempre, no puedo estudiar.', telefono: '', timestamp: 1747900000000 },
-  { nombre: 'Mateo L.', institucion: 'Duoc UC - Sede Viña del Mar', barrio: 'Centro Quilpué', intencion: 'talvez', motivo: 'Me interesaría si el microcentro está cerca de la parada de la micro.', telefono: '', timestamp: 1747850000000 },
-  { nombre: 'Javiera S.', institucion: 'INACAP - Sede Valparaíso', barrio: 'Cerro Cordillera', intencion: 'si', motivo: 'Necesito un lugar tranquilo con buena conexión para rendir pruebas online.', telefono: '', timestamp: 1747800000000 },
-  { nombre: 'Tomás A.', institucion: 'Universidad de Playa Ancha (UPLA)', barrio: 'Cerro Bellavista', intencion: 'si', motivo: 'Subir archivos pesados desde mi cerro es un suplicio, la señal es pésima.', telefono: '', timestamp: 1747750000000 },
-  { nombre: 'Catalina F.', institucion: 'Universidad Santo Tomás (UST) - Sede Viña del Mar', barrio: 'Recreo', intencion: 'talvez', motivo: 'Dependería de si hay un punto cerca del paseo Recreo.', telefono: '', timestamp: 1747700000000 },
-  { nombre: 'Diego N.', institucion: 'INACAP - Sede Viña del Mar', barrio: 'Los Aromos', intencion: 'si', motivo: 'Viajo en micro todos los días y a veces no tengo dónde estudiar antes de clases.', telefono: '', timestamp: 1747650000000 },
-  { nombre: 'Fernanda O.', institucion: 'Universidad de Valparaíso (UV) - Campus Playa Ancha', barrio: 'El Sauce, Concón', intencion: 'si', motivo: 'Desde El Sauce hasta la sede son 40 minutos, necesito un punto intermedio.', telefono: '', timestamp: 1747600000000 },
-  { nombre: 'Rodrigo C.', institucion: 'Duoc UC - Sede Valparaíso', barrio: 'Puerto, Plan', intencion: 'talvez', motivo: 'Depende de cuántas estaciones haya disponibles y si están libres.', telefono: '', timestamp: 1747550000000 },
-  { nombre: 'Camila V.', institucion: 'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central', barrio: 'Miraflores', intencion: 'si', motivo: 'Vengo desde Viña en micro, sería perfecto llegar y estudiar antes de clases.', telefono: '', timestamp: 1747500000000 },
-  { nombre: 'Felipe B.', institucion: 'Universidad Técnica Federico Santa María (UTFSM) - Casa Central Valparaíso', barrio: 'Los Presidentes, Quilpué', intencion: 'no', motivo: 'Tengo buena fibra en casa y un escritorio cómodo, prefiero quedarme.', telefono: '', timestamp: 1747450000000 },
-  { nombre: 'Sofía E.', institucion: 'INACAP - Sede Valparaíso', barrio: 'Cerro Alegre', intencion: 'si', motivo: 'En mi pasaje del cerro Alegre no hay fibra óptica y el 4G es muy lento.', telefono: '', timestamp: 1747400000000 },
-  { nombre: 'Nicolás T.', institucion: 'Universidad de Playa Ancha (UPLA)', barrio: 'Cerro Barón', intencion: 'si', motivo: 'Sería increíble tener un espacio así en la junta de vecinos del cerro.', telefono: '', timestamp: 1747350000000 },
-  { nombre: 'Antonia G.', institucion: 'Duoc UC - Sede Viña del Mar', barrio: 'Las Vegas', intencion: 'talvez', motivo: 'Lo usaría si el horario es compatible con mis clases de tarde.', telefono: '', timestamp: 1747300000000 },
-  { nombre: 'Ignacio H.', institucion: 'Universidad de Valparaíso (UV) - Sede Reñaca', barrio: 'Concón Norte', intencion: 'si', motivo: 'Estudiar en la sede vecinal suena bien, hay mucha gente sin acceso aquí.', telefono: '', timestamp: 1747250000000 },
-  { nombre: 'Francisca J.', institucion: 'INACAP - Sede Viña del Mar', barrio: 'La Palma, Quilpué', intencion: 'si', motivo: 'Mi proveedor de internet falla los fines de semana cuando más necesito estudiar.', telefono: '', timestamp: 1747200000000 },
-  { nombre: 'Pablo K.', institucion: 'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central', barrio: 'El Almendral', intencion: 'talvez', motivo: 'Necesitaría saber el horario exacto, trabajo en las mañanas.', telefono: '', timestamp: 1747150000000 },
-  { nombre: 'Constanza Z.', institucion: 'Universidad Técnica Federico Santa María (UTFSM) - Sede Viña del Mar', barrio: 'Viña Centro', intencion: 'si', motivo: 'En Viña hay muchas juntas de vecinos subutilizadas que podrían aprovecharse.', telefono: '', timestamp: 1747100000000 },
-  { nombre: 'Bastián Q.', institucion: 'Universidad Santo Tomás (UST) - Sede Viña del Mar', barrio: 'Villa Alemana Centro', intencion: 'si', motivo: 'Desde Villa Alemana es difícil acceder a buenos espacios de estudio con wifi.', telefono: '', timestamp: 1747050000000 },
-  { nombre: 'Martina W.', institucion: 'Duoc UC - Sede Valparaíso', barrio: 'Cerro Esperanza', intencion: 'si', motivo: 'Un espacio cerca de casa con buen internet cambiaría completamente mi rutina.', telefono: '', timestamp: 1747000000000 },
-  { nombre: 'Alonso X.', institucion: 'INACAP - Sede Valparaíso', barrio: 'Playa Ancha', intencion: 'talvez', motivo: 'Lo usaría solo si el horario llega hasta las 21:00 o más tarde.', telefono: '', timestamp: 1746950000000 },
-  { nombre: 'Renata Y.', institucion: 'Universidad de Playa Ancha (UPLA)', barrio: "Cerro O'Higgins", intencion: 'si', motivo: 'El frío y el viento de los cerros hacen imposible concentrarse en casa.', telefono: '', timestamp: 1746900000000 },
-  { nombre: 'Cristóbal U.', institucion: 'Universidad de Valparaíso (UV) - Campus Playa Ancha', barrio: 'El Belloto, Quilpué', intencion: 'no', motivo: 'Ya tengo un lugar fijo donde estudio y me queda cerca, no cambiaría.', telefono: '', timestamp: 1746850000000 },
-  { nombre: 'Valentina D.', institucion: 'Pontificia Universidad Católica de Valparaíso (PUCV) - Casa Central', barrio: 'Reñaca Alto', intencion: 'si', motivo: 'En Reñaca Alto no hay nada parecido, lo necesitamos urgente.', telefono: '', timestamp: 1746800000000 },
-  { nombre: 'Hernán I.', institucion: 'Duoc UC - Sede Viña del Mar', barrio: 'Concón Centro', intencion: 'si', motivo: 'En Concón no existen alternativas de estudio fuera de la casa.', telefono: '', timestamp: 1746750000000 },
-  { nombre: 'Luciana P.', institucion: 'INACAP - Sede Viña del Mar', barrio: 'Cerro Polanco', intencion: 'si', motivo: 'Sería el espacio que le falta al cerro, muchos estudiamos aquí.', telefono: '', timestamp: 1746700000000 },
-  { nombre: 'Emilio R.', institucion: 'Universidad Técnica Federico Santa María (UTFSM) - Casa Central Valparaíso', barrio: 'Villa Alemana Sur', intencion: 'talvez', motivo: 'Dependería de cuánto me demoraría en llegar, no tengo auto.', telefono: '', timestamp: 1746650000000 },
-]
-
-const STORAGE_KEY = 'biblio_registros_v3'
-const VISITAS_KEY = 'biblio_visitas_v2'
-const VISITAS_INICIAL = 173
 
 function SelectArrow() {
   return (
@@ -90,20 +46,34 @@ const intencionColor = (val: string) => {
 }
 
 export default function SeccionExperimento() {
-  const [registros, setRegistros] = useState<Registro[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved) return JSON.parse(saved)
-    } catch { /* empty */ }
-    return REGISTROS_SIMULADOS
+  const queryClient = useQueryClient()
+
+  const { data: registros = [], isLoading: loadingRegistros } = useQuery({
+    queryKey: ['registros'],
+    queryFn: getRegistros,
   })
 
-  const [visitas, setVisitas] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem(VISITAS_KEY)
-      if (saved) return parseInt(saved, 10)
-    } catch { /* empty */ }
-    return VISITAS_INICIAL
+  const { data: visitas = 0 } = useQuery({
+    queryKey: ['visitas'],
+    queryFn: incrementarVisitas,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  })
+
+  const mutation = useMutation({
+    mutationFn: crearRegistro,
+    onSuccess: (nuevo) => {
+      queryClient.setQueryData(['registros'], [nuevo, ...registros])
+      setEnviado(true)
+      setTimeout(() => setEnviado(false), 5000)
+      setNombre('')
+      setInstitucion('')
+      setBarrio('')
+      setIntencion('')
+      setMotivo('')
+      setTelefono('')
+      setErrors({})
+    },
   })
 
   const [nombre, setNombre] = useState('')
@@ -117,17 +87,6 @@ export default function SeccionExperimento() {
   const [enviado, setEnviado] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const instRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const nuevas = visitas + 1
-    setVisitas(nuevas)
-    localStorage.setItem(VISITAS_KEY, String(nuevas))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(registros))
-  }, [registros])
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -174,29 +133,22 @@ export default function SeccionExperimento() {
       setErrors(errs)
       return
     }
-    const nuevo: Registro = {
+    const payload: CreateRegistroPayload = {
       nombre: nombre.trim(),
       institucion,
       barrio: barrio.trim(),
       intencion,
       motivo: motivo.trim(),
       telefono: telefono.trim(),
-      timestamp: Date.now(),
     }
-    setRegistros(prev => [nuevo, ...prev])
-    setNombre('')
-    setInstitucion('')
-    setBarrio('')
-    setIntencion('')
-    setMotivo('')
-    setTelefono('')
-    setErrors({})
-    setEnviado(true)
-    setTimeout(() => setEnviado(false), 5000)
+    mutation.mutate(payload)
   }
 
+  const isLoading = loadingRegistros
   const estudiantesInscritos = registros.length
-  const tasaConversion = parseFloat(((estudiantesInscritos / visitas) * 100).toFixed(1))
+  const tasaConversion = visitas > 0
+    ? parseFloat(((estudiantesInscritos / visitas) * 100).toFixed(1))
+    : 0
   const objetivoCumplido = estudiantesInscritos >= 30 || tasaConversion >= 15
   const progreso = Math.min((estudiantesInscritos / 30) * 100, 100)
   const ultimos5 = registros.slice(0, 5)
@@ -248,6 +200,13 @@ export default function SeccionExperimento() {
             ) : (
               <>
                 <h3 className="text-base font-bold text-white mb-6">Registra tu interés</h3>
+
+                {mutation.isError && (
+                  <div className="mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    No se pudo enviar el registro. Inténtalo de nuevo.
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-5">
 
                   {/* Nombre */}
@@ -271,30 +230,26 @@ export default function SeccionExperimento() {
                       Contacto <span className="text-white/20 font-normal normal-case tracking-normal">(opcional)</span>
                     </label>
                     <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <input
-                          type="tel"
-                          value={telefono.split('|')[0] ?? ''}
-                          onChange={e => {
-                            const cel = telefono.split('|')[1] ?? ''
-                            setTelefono(`${e.target.value}|${cel}`)
-                          }}
-                          placeholder="Teléfono fijo"
-                          className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="tel"
-                          value={telefono.split('|')[1] ?? ''}
-                          onChange={e => {
-                            const fijo = telefono.split('|')[0] ?? ''
-                            setTelefono(`${fijo}|${e.target.value}`)
-                          }}
-                          placeholder="Celular"
-                          className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all"
-                        />
-                      </div>
+                      <input
+                        type="tel"
+                        value={telefono.split('|')[0] ?? ''}
+                        onChange={e => {
+                          const cel = telefono.split('|')[1] ?? ''
+                          setTelefono(`${e.target.value}|${cel}`)
+                        }}
+                        placeholder="Teléfono fijo"
+                        className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all"
+                      />
+                      <input
+                        type="tel"
+                        value={telefono.split('|')[1] ?? ''}
+                        onChange={e => {
+                          const fijo = telefono.split('|')[0] ?? ''
+                          setTelefono(`${fijo}|${e.target.value}`)
+                        }}
+                        placeholder="Celular"
+                        className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-inacap-red/50 focus:ring-1 focus:ring-inacap-red/20 transition-all"
+                      />
                     </div>
                     <p className="text-white/20 text-[10px] mt-1.5 leading-snug">
                       Solo para contactarte si el piloto avanza. No se comparte con terceros.
@@ -392,9 +347,10 @@ export default function SeccionExperimento() {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 mt-1 bg-inacap-red text-white font-bold text-sm rounded-xl hover:bg-red-600 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(226,28,36,0.25)] tracking-wide"
+                    disabled={mutation.isPending}
+                    className="w-full py-3.5 mt-1 bg-inacap-red text-white font-bold text-sm rounded-xl hover:bg-red-600 active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(226,28,36,0.25)] tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Registrar mi interés →
+                    {mutation.isPending ? 'Enviando...' : 'Registrar mi interés →'}
                   </button>
                 </form>
               </>
@@ -407,16 +363,20 @@ export default function SeccionExperimento() {
             {/* KPIs */}
             <div className="grid grid-cols-3 lg:grid-cols-1 gap-3">
               <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:gap-4">
-                <div className="text-2xl md:text-3xl font-black text-white leading-none">{visitas.toLocaleString('es-CL')}</div>
+                <div className="text-2xl md:text-3xl font-black text-white leading-none">
+                  {visitas > 0 ? visitas.toLocaleString('es-CL') : '—'}
+                </div>
                 <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Visitas al test card</div>
               </div>
               <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:gap-4">
-                <div className="text-2xl md:text-3xl font-black text-inacap-red leading-none">{estudiantesInscritos}</div>
+                <div className="text-2xl md:text-3xl font-black text-inacap-red leading-none">
+                  {isLoading ? '—' : estudiantesInscritos}
+                </div>
                 <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Estudiantes inscritos</div>
               </div>
               <div className={`rounded-xl border p-4 text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:gap-4 transition-colors ${objetivoCumplido ? 'border-green-500/25 bg-green-500/5' : 'border-white/[0.07] bg-white/[0.02]'}`}>
                 <div className={`text-2xl md:text-3xl font-black leading-none ${objetivoCumplido ? 'text-green-400' : 'text-yellow-400'}`}>
-                  {tasaConversion}%
+                  {isLoading ? '—' : `${tasaConversion}%`}
                 </div>
                 <div className="text-[10px] text-white/35 font-medium mt-1 lg:mt-0 leading-tight">Tasa de conversión</div>
               </div>
@@ -451,31 +411,44 @@ export default function SeccionExperimento() {
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/25 mb-4">
                 Últimos registros en vivo
               </p>
-              <ul className="space-y-3.5">
-                {ultimos5.map((r, i) => (
-                  <li key={`${r.timestamp}-${i}`} className="pb-3.5 border-b border-white/[0.05] last:border-0 last:pb-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <span className="text-white/80 text-sm font-semibold leading-tight">{r.nombre}</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${intencionColor(r.intencion)}`}>
-                        {intencionLabel(r.intencion)}
-                      </span>
+              {isLoading ? (
+                <div className="space-y-3.5">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="pb-3.5 border-b border-white/[0.05] last:border-0 last:pb-0 animate-pulse">
+                      <div className="h-3 bg-white/[0.06] rounded w-3/4 mb-2" />
+                      <div className="h-2.5 bg-white/[0.04] rounded w-1/2" />
                     </div>
-                    <p className="text-white/35 text-[11px] leading-tight mb-0.5 truncate">{r.institucion}</p>
-                    <p className="text-white/25 text-[11px] mb-1">📍 {r.barrio}</p>
-                    {r.motivo && (
-                      <p className="text-white/20 text-[11px] italic leading-snug line-clamp-2 mb-0.5">"{r.motivo}"</p>
-                    )}
-                    {r.telefono && r.telefono.replace('|', '').trim() && (
-                      <p className="text-white/15 text-[10px]">
-                        📞{' '}
-                        {[r.telefono.split('|')[0], r.telefono.split('|')[1]]
-                          .filter(Boolean)
-                          .join(' · ')}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </div>
+              ) : ultimos5.length === 0 ? (
+                <p className="text-white/20 text-xs">Aún no hay registros. ¡Sé el primero!</p>
+              ) : (
+                <ul className="space-y-3.5">
+                  {ultimos5.map((r, i) => (
+                    <li key={r._id ?? i} className="pb-3.5 border-b border-white/[0.05] last:border-0 last:pb-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <span className="text-white/80 text-sm font-semibold leading-tight">{r.nombre}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${intencionColor(r.intencion)}`}>
+                          {intencionLabel(r.intencion)}
+                        </span>
+                      </div>
+                      <p className="text-white/35 text-[11px] leading-tight mb-0.5 truncate">{r.institucion}</p>
+                      <p className="text-white/25 text-[11px] mb-1">📍 {r.barrio}</p>
+                      {r.motivo && (
+                        <p className="text-white/20 text-[11px] italic leading-snug line-clamp-2 mb-0.5">"{r.motivo}"</p>
+                      )}
+                      {r.telefono && r.telefono.replace('|', '').trim() && (
+                        <p className="text-white/15 text-[10px]">
+                          📞{' '}
+                          {[r.telefono.split('|')[0], r.telefono.split('|')[1]]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 
